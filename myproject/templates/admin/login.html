@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+<!-- Debug banner (remove later if not needed) -->
+<div style="background:#fff3cd;border:1px solid #ffeeba;padding:6px;margin-bottom:8px;">
+  Using project admin/login.html
+</div>
+
+{% block content %}
+  <div id="content" class="login">
+    <h1>{% trans "Log in" %}</h1>
+    <p class="login-subtitle" style="text-align:center;margin:.25rem 0 1rem;">
+      Dynamic Ticket Workflow Portal
+    </p>
+
+    {% if form.errors and not form.non_field_errors %}
+      <p class="errornote">{% trans "Please correct the error below." %}</p>
+    {% endif %}
+    {% for error in form.non_field_errors %}
+      <p class="errornote">{{ error }}</p>
+    {% endfor %}
+
+    <form action="{% url 'admin:login' %}" method="post" id="login-form">
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="id_username">{% trans 'Username' %}:</label>
+        {{ form.username }}
+      </div>
+      <div class="form-row">
+        <label for="id_password">{% trans 'Password' %}:</label>
+        {{ form.password }}
+      </div>
+      <div class="submit-row">
+        <input type="hidden" name="next" value="{{ next }}">
+        <input type="submit" value="{% trans 'Log in' %}">
+      </div>
+    </form>
+
+    <p><a href="{% url 'password_reset' %}">{% trans "Forgot password?" %}</a></p>
+  </div>
+{% endblock %}

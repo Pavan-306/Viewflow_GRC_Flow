@@ -1,0 +1,141 @@
+{% extends "viewflow/workflow/task_base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <style>
+    .status-chip {
+      border-radius: 16px;
+      padding: 4px 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status-pending {
+      background: #e2e3e5;
+      color: #383d41;
+      border: 1px solid #d6d8db;
+    }
+
+    .decision-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+    }
+    .decision-table th, .decision-table td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+    }
+    .decision-table th {
+      text-align: left;
+      background: #fafafa;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .badge-approved {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .badge-rejected {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .badge-pending {
+      background: #e2e3e5;
+      color: #383d41;
+      border: 1px solid #d6d8db;
+    }
+  </style>
+
+  <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+    {% if ticket_summary_html %}
+      <div style="flex:1 1 420px; min-width:320px;">
+        <h3 style="margin-top:0">Ticket Summary</h3>
+
+        {# 1) Colored status chips #}
+        {% if status_row %}
+          <div style="margin:6px 0 12px; display:flex; gap:12px; flex-wrap:wrap;">
+            {% for label, value in status_row.items %}
+              {% if value == "approved" %}
+                <span class="status-chip status-approved">{{ label }}: Approved</span>
+              {% elif value == "rejected" %}
+                <span class="status-chip status-rejected">{{ label }}: Rejected</span>
+              {% else %}
+                <span class="status-chip status-pending">{{ label }}: Pending</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {# 2) Decision Summary table with badges #}
+        {% if status_row %}
+          <table class="decision-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for label, value in status_row.items %}
+                <tr>
+                  <td>{{ label }}</td>
+                  <td>
+                    {% if value == "approved" %}
+                      <span class="badge badge-approved">Approved</span>
+                    {% elif value == "rejected" %}
+                      <span class="badge badge-rejected">Rejected</span>
+                    {% else %}
+                      <span class="badge badge-pending">Pending</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+
+        {# 3) Field values summary (built in views.py) #}
+        <div>{{ ticket_summary_html|safe }}</div>
+      </div>
+    {% endif %}
+
+    <div style="flex:1 1 420px; min-width:320px;">
+      <form method="post" enctype="multipart/form-data" style="margin-top:1rem">
+        {% csrf_token %}
+        <vf-form activation=activation>
+          {{ form }}
+          {% if is_approval %}
+            <div style="margin-top:12px; display:flex; gap:10px;">
+              <button name="decision" value="approved" type="submit" class="mdc-button mdc-button--raised">
+                {% trans "Approve" %}
+              </button>
+              <button name="decision" value="rejected" type="submit" class="mdc-button mdc-button--outlined">
+                {% trans "Reject" %}
+              </button>
+            </div>
+          {% else %}
+            <button type="submit" class="mdc-button mdc-button--raised">
+              {% trans "Submit" %}
+            </button>
+          {% endif %}
+        </vf-form>
+      </form>
+    </div>
+  </div>
+{% endblock %}
