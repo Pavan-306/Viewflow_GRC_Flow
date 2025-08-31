@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 from viewflow.urls import Site, Application
 from viewflow.workflow.flow import FlowAppViewset
+from viewflow.contrib.auth import AuthViewset
 
 from ticketflow.flows import TicketFlow
 
@@ -22,7 +23,7 @@ site = Site(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path('accounts/', AuthViewset().urls),
     path("", site.urls),
 ]
 

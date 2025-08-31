@@ -52,11 +52,7 @@ LOGIN_REDIRECT_URL = '/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / "templates",                 # project root: templates/
-            BASE_DIR / "myproject" / "templates",   # myproject/templates/
-            BASE_DIR / "ticketflow" / "templates",  # ticketflow/templates/
-        ],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
