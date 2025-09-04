@@ -9,57 +9,49 @@
       font-size: 0.9rem;
       font-weight: 500;
     }
-    .status-approved {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .status-rejected {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .status-pending {
-      background: #e2e3e5;
-      color: #383d41;
-      border: 1px solid #d6d8db;
+    .status-approved { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+    .status-rejected { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+    .status-pending  { background:#e2e3e5; color:#383d41; border:1px solid #d6d8db; }
+
+    .decision-table { width:100%; border-collapse:collapse; margin:10px 0 18px; }
+    .decision-table th, .decision-table td { border:1px solid #ddd; padding:8px 10px; }
+    .decision-table th { text-align:left; background:#fafafa; }
+
+    .badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:.85rem; font-weight:600; }
+    .badge-approved { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+    .badge-rejected { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+    .badge-pending  { background:#e2e3e5; color:#383d41; border:1px solid #d6d8db; }
+
+    /* ----------- tidy up the form area ----------- */
+
+    /* Hide help text (removes the long sentences) */
+    .vf-form .helptext,
+    .vf-form small.helptext { display:none !important; }
+
+    /* Full-width, aligned controls */
+    .vf-form input[type="text"],
+    .vf-form input[type="email"],
+    .vf-form input[type="number"],
+    .vf-form input[type="date"],
+    .vf-form input[type="file"],
+    .vf-form select,
+    .vf-form textarea {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box;
     }
 
-    .decision-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 10px 0 18px;
-    }
-    .decision-table th, .decision-table td {
-      border: 1px solid #ddd;
-      padding: 8px 10px;
-    }
-    .decision-table th {
-      text-align: left;
-      background: #fafafa;
-    }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-    .badge-approved {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .badge-rejected {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    .badge-pending {
-      background: #e2e3e5;
-      color: #383d41;
-      border: 1px solid #d6d8db;
-    }
+    /* Equal height for comment + any long text areas */
+    .vf-form textarea { min-height: 150px; resize: vertical; }
+
+    /* Row/label spacing */
+    .vf-form .form-row,
+    .vf-form .field,
+    .vf-form p { display:block; margin:10px 0; }
+    .vf-form label { display:block; margin-bottom:6px; font-weight:600; }
+
+    /* Button row */
+    .vf-actions { margin-top:12px; display:flex; gap:10px; }
   </style>
 
   <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
@@ -67,7 +59,6 @@
       <div style="flex:1 1 420px; min-width:320px;">
         <h3 style="margin-top:0">Ticket Summary</h3>
 
-        {# 1) Colored status chips #}
         {% if status_row %}
           <div style="margin:6px 0 12px; display:flex; gap:12px; flex-wrap:wrap;">
             {% for label, value in status_row.items %}
@@ -82,7 +73,6 @@
           </div>
         {% endif %}
 
-        {# 2) Decision Summary table with badges #}
         {% if status_row %}
           <table class="decision-table">
             <thead>
@@ -110,18 +100,23 @@
           </table>
         {% endif %}
 
-        {# 3) Field values summary (built in views.py) #}
         <div>{{ ticket_summary_html|safe }}</div>
       </div>
     {% endif %}
 
     <div style="flex:1 1 420px; min-width:320px;">
-      <form method="post" enctype="multipart/form-data" style="margin-top:1rem">
+      {% if role_display %}
+        <h3 style="margin:0 0 .5rem 0;">{{ role_display }} Approval</h3>
+      {% endif %}
+
+      <!-- IMPORTANT: add class="vf-form" so the CSS above applies -->
+      <form method="post" enctype="multipart/form-data" class="vf-form" style="margin-top:.25rem">
         {% csrf_token %}
         <vf-form activation=activation>
           {{ form }}
+
           {% if is_approval %}
-            <div style="margin-top:12px; display:flex; gap:10px;">
+            <div class="vf-actions">
               <button name="decision" value="approved" type="submit" class="mdc-button mdc-button--raised">
                 {% trans "Approve" %}
               </button>

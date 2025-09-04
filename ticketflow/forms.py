@@ -1,3 +1,4 @@
+# ticketflow/forms.py
 from django import forms
 from django.core.validators import RegexValidator
 from .models import Form as FormModel, FormField, TicketProcess
@@ -10,22 +11,27 @@ def add_fields_to_form(
     role_code: str | None = None,
     role: str | None = None,
     initial_map: dict | None = None,
+    exclude_labels: set[str] | None = None,   # <--- NEW
 ):
     """
     Add dynamic fields from FormField into the given Django form.
 
-    Accepts either `role_code` or `role` for backward compatibility.
+    - Pass either `role_code` or `role` (kept for backward compatibility).
+    - If `exclude_labels` is provided, fields whose label is in that set are skipped.
     """
     if role_code is None:
         role_code = role
+
+    if exclude_labels is None:
+        exclude_labels = set()
 
     qs = form_obj.fields.all()
     if role_code:
         qs = qs.filter(role=role_code)
 
     for ff in qs:
-        if ff.hidden:
-            # Skip rendering completely if hidden
+        # Skip hidden fields or fields excluded by label
+        if ff.hidden or (ff.label in exclude_labels):
             continue
 
         key = str(ff.id)
@@ -67,7 +73,7 @@ def add_fields_to_form(
             )
 
         elif ff.field_type == FormField.FILE:
-            # IMPORTANT: don't pass validators twice; merge here explicitly
+            # IMPORTANT: don’t pass validators twice; merge here explicitly
             file_validators = list(base_validators) + [validate_uploaded_file]
             file_kwargs = dict(common_kwargs)
             file_kwargs["validators"] = file_validators
