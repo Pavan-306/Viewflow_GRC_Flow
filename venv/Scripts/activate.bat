@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Admin\Viewflow_Dynamic-form_Role-based-fields-main\venv
+set VIRTUAL_ENV=C:\Users\Admin\Viewflow_DF_1\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

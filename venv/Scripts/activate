@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Admin\Viewflow_Dynamic-form_Role-based-fields-main\venv"
+VIRTUAL_ENV="C:\Users\Admin\Viewflow_DF_1\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
